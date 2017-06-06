@@ -1,6 +1,6 @@
 {{#if root}}
     <ul>
-        {{>item item=root}}
+        {{>branch branch=root}}
     </ul>
 
     <hr>
@@ -12,9 +12,6 @@
     {{#if encrypted}}
         <p>
             CONFIG:
-            {{@log('===')}}
-            {{@log('Uncompressed', encrypted.length / 1000.0 + ' kb')}}
-            {{@log('Compressed', @compressed(encrypted).length / 1000.0 + ' kb')}}
         </p>
 
         <p style="overflow: hidden; text-overflow: ellipsis; ">
@@ -27,7 +24,7 @@
     {{#with selected}}
         <p>
             <a href="#" data-unselect>x</a><br>
-            {{data.name}}<br>
+            {{data.path}}<br>
             <textarea class="file-content" value::{{data.content}}></textarea>
         </p>
     {{/with}}
@@ -45,9 +42,17 @@
         KEYS:
 
         <ul>
-            {{#each @sort(keys)}}
-                <li>{{this}}</li>
+            {{#each root.data.keys}}
+                <li class="key" key:{{this}}>
+                    Name: <input type="text" value::{{name}} data-key-attr="name"><br>
+                    Value: <input type="text" value::{{value}} data-key-attr="value"><br>
+                    <a href="#" key:{{this}} data-delete-key>x</a>
+                </li>
             {{/each}}
+
+            <li>
+                <a href="#" data-add-key>+ Add</a>
+            </li>
         </ul>
     </p>
 {{/if}}

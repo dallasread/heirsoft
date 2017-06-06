@@ -1,0 +1,11 @@
+<li>
+    <a href="#" branch:{{branch}}>
+        {{branch.data.path}}
+    </a>
+
+    <ul>
+        {{#each branch.data.children}}
+            <li>{{>branch branch=this}}</li>
+        {{/each}}
+    </ul>
+</li>

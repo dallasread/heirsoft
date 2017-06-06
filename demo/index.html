@@ -8,13 +8,21 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type="text/javascript" src="heirsoft.js"></script>
     <script type="text/javascript">
-        // /dallas
-        //   /1.md
-        // /awesome
         var tree = new window.Tree({
             $: jQuery.noConflict(),
             data: {
-                keys: ['one', 'two', 'three'],
+                keys: [{
+                        name: 'one',
+                        value: 'OK'
+                    }, 
+                    {
+                        name: 'two',
+                        value: 'OK'
+                    }, 
+                    {
+                        name: 'three',
+                        value: 'OK'
+                }],
                 path: '/',
                 key: 'zero',
                 children: {
