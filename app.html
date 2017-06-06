@@ -1,0 +1,53 @@
+{{#if root}}
+    <ul>
+        {{>item item=root}}
+    </ul>
+
+    <hr>
+
+    <form name="encrypt">
+        <button>Encrypt</button>
+    </form>
+
+    {{#if encrypted}}
+        <p>
+            CONFIG:
+            {{@log('===')}}
+            {{@log('Uncompressed', encrypted.length / 1000.0 + ' kb')}}
+            {{@log('Compressed', @compressed(encrypted).length / 1000.0 + ' kb')}}
+        </p>
+
+        <p style="overflow: hidden; text-overflow: ellipsis; ">
+            {{encrypted}}
+        </p>
+    {{/if}}
+
+    <hr>
+
+    {{#with selected}}
+        <p>
+            <a href="#" data-unselect>x</a><br>
+            {{data.name}}<br>
+            <textarea class="file-content" value::{{data.content}}></textarea>
+        </p>
+    {{/with}}
+
+    <hr>
+
+    <form name="restore">
+        <textarea value::{{decryption}}></textarea><br>
+        <button type="submit">Restore</button>
+    </form>
+
+    <hr>
+
+    <p>
+        KEYS:
+
+        <ul>
+            {{#each @sort(keys)}}
+                <li>{{this}}</li>
+            {{/each}}
+        </ul>
+    </p>
+{{/if}}

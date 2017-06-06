@@ -1,0 +1,11 @@
+<li>
+    <a href="#" item:{{item}}>
+        {{item.data.path}}
+    </a>
+
+    <ul>
+        {{#each item.data.children}}
+            <li>{{>item item=this}}</li>
+        {{/each}}
+    </ul>
+</li>

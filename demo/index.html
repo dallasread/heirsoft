@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Heirsoft</title>
+</head>
+<body>
+    <div id="tree"></div>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="heirsoft.js"></script>
+    <script type="text/javascript">
+        // /dallas
+        //   /1.md
+        // /awesome
+        var tree = new window.Tree({
+            $: jQuery.noConflict(),
+            data: {
+                keys: ['one', 'two', 'three'],
+                path: '/',
+                key: 'zero',
+                children: {
+                    k34l32jk4ioauf0su0c: {
+                        path: '/dallas',
+                        key: 'four',
+                        children: {
+                            nk342l2jk4iouf0su09: {
+                                path: '/1.md',
+                                content: 'My content!',
+                                key: 'awesome'
+                            },
+                            kb342l2jk4iouf0su09: {
+                                path: '/2.md',
+                                content: 'My content #2!',
+                                key: 'wow'
+                            }
+                        }
+                    },
+                    nk342l2jk4iouf0su09: {
+                        path: '/awesome',
+                        key: 'five'
+                    }
+                }
+            }
+        });
+
+        tree.appendTo(document.getElementById('tree'));
+    </script>
+</body>
+</html>
