@@ -13,19 +13,17 @@
             data: {
                 keys: [{
                     name: 'Anonymous',
-                    value: 'password'
+                    public: 'password',
+                    private: 'drowssap' // only for master
                 }],
                 path: 'My Stories',
                 children: [
                     {
-                        path: 'Welcome.md',
-                        content: 'Welcome to the game!'
+                        path: 'Welcome.md'
                     }
                 ]
             }
-        });
-
-        tree.appendTo(document.getElementById('tree'));
+        }).appendTo(document.getElementById('tree'));
     </script>
 </body>
 </html>

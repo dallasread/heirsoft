@@ -1,12 +1,12 @@
 var Generator = require('generate-js'),
     aes256 = require('aes256');
 
-function prepKeys(keys) {
+function prepKeys(keys, attr) {
     return keys
         .filter(function(k) {
-            return k.value && k.value.length;
+            return k[attr] && k[attr].length;
         }).map(function(k) {
-            return k.value;
+            return k[attr];
         }).sort();
 }
 
@@ -88,7 +88,7 @@ Branch.definePrototype({
 
     encrypt: function encrypt(str) {
         var _ = this,
-            keys = prepKeys(_.keys),
+            keys = prepKeys(_.keys, 'public'),
             encrypted = str;
 
         for (var i = keys.length - 1; i >= 0; i--) {

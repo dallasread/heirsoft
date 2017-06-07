@@ -6,12 +6,12 @@
     <hr>
 
     {{#with selected}}
-        <p class="file" file:{{this}}>
+        <p class="branch" branch:{{this}}>
             <a href="#" data-unselect>x</a><br>
-            <input type="text" data-file-attr="path" value::{{path}}>
+            <input type="text" data-branch-attr="path" value::{{path}}>
             ({{@fullPath(this)}})
             <br>
-            <textarea data-file-attr="content" value::{{content}}></textarea>
+            <textarea data-branch-attr="content" value::{{content}}></textarea>
         </p>
     {{/with}}
 
@@ -24,7 +24,8 @@
             {{#each root.keys}}
                 <li class="key" key:{{this}}>
                     Name: <input type="text" value::{{name}} data-key-attr="name"><br>
-                    Value: <input type="text" value::{{value}} data-key-attr="value"><br>
+                    Public: <input type="text" value::{{public}} data-key-attr="public"><br>
+                    Private: <input type="text" value::{{private}} data-key-attr="private"><br>
                     <a href="#" key:{{this}} data-delete-key>x</a>
                 </li>
             {{/each}}
@@ -38,7 +39,7 @@
     <hr>
 
     <form name="decrypt">
-        <textarea value::{{decryption}}></textarea><br>
+        <textarea></textarea><br>
         <button type="submit">Restore</button>
     </form>
 
