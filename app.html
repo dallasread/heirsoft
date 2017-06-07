@@ -5,36 +5,15 @@
 
     <hr>
 
-    <form name="encrypt">
-        <button>Encrypt</button>
-    </form>
-
-    {{#if encrypted}}
-        <p>
-            CONFIG:
-        </p>
-
-        <p style="overflow: hidden; text-overflow: ellipsis; ">
-            {{encrypted}}
-        </p>
-    {{/if}}
-
-    <hr>
-
     {{#with selected}}
-        <p>
+        <p class="file" file:{{this}}>
             <a href="#" data-unselect>x</a><br>
-            {{data.path}}<br>
-            <textarea class="file-content" value::{{data.content}}></textarea>
+            <input type="text" data-file-attr="path" value::{{path}}>
+            ({{@fullPath(this)}})
+            <br>
+            <textarea data-file-attr="content" value::{{content}}></textarea>
         </p>
     {{/with}}
-
-    <hr>
-
-    <form name="restore">
-        <textarea value::{{decryption}}></textarea><br>
-        <button type="submit">Restore</button>
-    </form>
 
     <hr>
 
@@ -42,7 +21,7 @@
         KEYS:
 
         <ul>
-            {{#each root.data.keys}}
+            {{#each root.keys}}
                 <li class="key" key:{{this}}>
                     Name: <input type="text" value::{{name}} data-key-attr="name"><br>
                     Value: <input type="text" value::{{value}} data-key-attr="value"><br>
@@ -55,4 +34,17 @@
             </li>
         </ul>
     </p>
+
+    <hr>
+
+    <form name="decrypt">
+        <textarea value::{{decryption}}></textarea><br>
+        <button type="submit">Restore</button>
+    </form>
+
+    <hr>
+
+    <form name="encrypt">
+        <button>Download</button>
+    </form>
 {{/if}}

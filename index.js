@@ -1,8 +1,51 @@
+function SORT_ALPHA2(a, b) {
+    if (!b.path.length)  return -1;
+    if (!a.path.length)  return 1;
+    if (a.path < b.path) return -1;
+    if (a.path > b.path) return 1;
+    return 0;
+}
+
+var NUMBER_GROUPS = /(-?\d*\.?\d+)/g,
+    SEPARATOR = '====================';
+
+function SORT_ALPHA(a, b) {
+    if (!b.path.length)  return -1;
+    if (!a.path.length)  return 1;
+
+    var aa = String(a.path).split(NUMBER_GROUPS),
+        bb = String(b.path).split(NUMBER_GROUPS),
+        min = Math.min(aa.length, bb.length),
+        x, y;
+
+    for (var i = 0; i < min; i++) {
+        x = parseFloat(aa[i]) || aa[i].toLowerCase();
+        y = parseFloat(bb[i]) || bb[i].toLowerCase();
+
+        if (x < y) {
+            return -1;
+        } else if (x > y) {
+            return 1;
+        }
+    }
+
+    return 0;
+};
+
+function findAncestors(branch) {
+    var ancestors = [branch];
+
+    while (branch.parent) {
+        ancestors.unshift(branch.parent);
+        branch = branch.parent;
+    }
+
+    return ancestors;
+}
+
 var CustomElement = require('generate-js-custom-element'),
     Branch = require('./branch'),
-    LZString = require('lz-string'),
-    gzip = require('gzip-js'),
-    pako = require('pako'),
+    FileSaver = require('file-saver'),
     aes256 = require('aes256'),
     CONFIG = {
         template: require('./app.html'),
@@ -12,8 +55,11 @@ var CustomElement = require('generate-js-custom-element'),
         transforms: {
             fullPath: function fullPath(branch) {
                 if (!branch) return '';
+                return ('/ ' + findAncestors(branch).map(function(a) { return a.path || 'Untitled'; }).join(' / ')).replace(/^\/\//, '/');
+            },
 
-                return findAncestors(branch).map(function(a) { return a.get('path'); }).join('');
+            alpha: function alpha(arr) {
+                return arr.sort(SORT_ALPHA)
             },
         }
     };
@@ -23,14 +69,10 @@ function byteCount(str) {
 }
 
 var Tree = CustomElement.createElement(CONFIG, function Tree(options) {
-    options               = typeof options               === 'object' ? options               : {};
-    options.data          = typeof options.data          === 'object' ? options.data          : {};
+    options = typeof options === 'object' ? options : {};
 
-    if (typeof options.data.path === 'undefined') throw new Error('`path` not supplied.');
-    if (typeof options.data.key  === 'undefined') throw new Error('`key` not supplied.');
-
-    var _ = this,   
-        root = new Branch({ data: options.data });
+    var _ = this,
+        root = new Branch(options.data);
 
     _.defineProperties({
         writable: true
@@ -38,11 +80,11 @@ var Tree = CustomElement.createElement(CONFIG, function Tree(options) {
         $: options.$
     });
 
-    CustomElement.call(_, { 
-        data: { 
+    CustomElement.call(_, {
+        data: {
             root: root,
             selected: undefined
-        } 
+        }
     });
 
     var $el = _.$(_.element);
@@ -57,14 +99,16 @@ var Tree = CustomElement.createElement(CONFIG, function Tree(options) {
         return false;
     });
 
-    $el.on('blur', 'textarea.file-content', function() {
-        _.set('selected.data.content', this.value);
-        return false;
+    $el.on('blur', '[data-file-attr]', function() {
+        var $this = _.$(this);
+        $this.closest('p.file')[0].data('file')[$this.attr('data-file-attr')] = this.value;
+        _.update();
     });
 
-    $el.on('submit', 'form[name="restore"]', function() {
+    $el.on('submit', 'form[name="decrypt"]', function() {
         var $textarea = _.$(this).find('textarea'),
-            val = $textarea.val().trim(),
+            splat = $textarea.val().trim().split(SEPARATOR),
+            val = splat.length === 1 ? val : splat[1],
             dataString;
 
         try {
@@ -83,23 +127,34 @@ var Tree = CustomElement.createElement(CONFIG, function Tree(options) {
         var raw = JSON.stringify( root.toJSON() ),
             encrypted = root.encrypt(raw);
 
-        _.set('encrypted', 'This file is encrypted...\n===\n' + encrypted);
+        encrypted = 'This file is encrypted...\n' + SEPARATOR + '\n' + encrypted;
 
-        // console.log('---');
-        // console.log('Raw          ~>', byteCount(raw) / 1000 + ' kb');
-        // console.log('Uncompressed ~>', byteCount(encrypted) / 1000 + ' kb');
-        // console.log('Compressed   ~>', byteCount(pako.deflate(encrypted)) / 1000 + ' kb');
+        FileSaver.saveAs(
+            new Blob(
+                [encrypted],
+                {
+                    type: 'text/plain; charset=utf-8'
+                }
+            ),
+            'heirsoft.txt'
+        );
 
         return false;
     });
 
     $el.on('click', '[data-delete-key]', function() {
-        root.data.keys.splice(root.data.keys.indexOf(this.data('key')), 1);
+        root.keys.splice(root.keys.indexOf(this.data('key')), 1);
+        _.update();
+    });
+
+    $el.on('click', '[data-delete-branch]', function() {
+        var branch = this.data('branch');
+        branch.parent.removeChild(branch);
         _.update();
     });
 
     $el.on('click', '[data-add-key]', function() {
-        root.data.keys.push({});
+        root.keys.push({});
         _.update();
     });
 
@@ -107,6 +162,18 @@ var Tree = CustomElement.createElement(CONFIG, function Tree(options) {
         var $this = _.$(this);
         $this.closest('li.key')[0].data('key')[$this.attr('data-key-attr')] = this.value;
         _.update();
+    });
+
+    $el.on('click', '[data-add-child]', function() {
+        var data = {};
+
+        if (_.$(this).attr('data-type') === 'folder') {
+            data.children = [];
+        } else {
+            data.content = 'Sample file.';
+        }
+
+        _.set( 'selected', this.data('parent').addChild(data) );
     });
 });
 

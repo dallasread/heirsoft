@@ -1,11 +1,30 @@
 <li>
     <a href="#" branch:{{branch}}>
-        {{branch.data.path}}
+        {{branch.path || 'Untitled'}}
     </a>
 
-    <ul>
-        {{#each branch.data.children}}
-            <li>{{>branch branch=this}}</li>
-        {{/each}}
-    </ul>
+    {{#if branch.parent}}
+        -
+        <a href="#" data-delete-branch branch:{{branch}}>x</a>
+    {{/if}}
+
+    {{#if branch.children}}
+        <ul>
+            {{#each @alpha(branch.children)}}
+                <li>{{>branch branch=this}}</li>
+            {{/each}}
+
+            <li>
+                <a href="#" data-add-child parent:{{branch}}>
+                    + File
+                </a>
+
+                |
+
+                <a href="#" data-add-child data-type="folder" parent:{{branch}}>
+                    + Folder
+                </a>
+            </li>
+        </ul>
+    {{/if}}
 </li>

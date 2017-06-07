@@ -1,85 +1,94 @@
 var Generator = require('generate-js'),
     aes256 = require('aes256');
 
-function findAncestors(branch) {
-    var ancestors = [branch];
-
-    while (branch.parent) {
-        ancestors.unshift(branch.parent);
-        branch = branch.parent;
-    }
-
-    return ancestors;
-}
-
 function prepKeys(keys) {
     return keys
-        .filter(function(k) { 
-            return k.value && k.value.length; 
-        }).map(function(k) { 
-            return k.value; 
+        .filter(function(k) {
+            return k.value && k.value.length;
+        }).map(function(k) {
+            return k.value;
         }).sort();
 }
 
 var Branch = Generator.generate(function Branch(options) {
-    options      = typeof options               === 'object' ? options               : {};
-    options.data = typeof options.data          === 'object' ? options.data          : {};
+    var _ = this;
 
-    if (typeof options.data.path === 'undefined') throw new Error('`path` not supplied.');
-    if (typeof options.data.key  === 'undefined') throw new Error('`key` not supplied.');
+    options = typeof options === 'object' ? options : {};
 
-    var _ = this,
-        key, child;
+    _.setData(options);
 
     _.defineProperties({
-        data: {}
+        key: options.key || Math.random()
     });
-
-    _.setData(options.data);
 });
 
 Branch.definePrototype({
-    addChild: function addChild(key, data) {
-        var _ = this;
+    addChild: function addChild(data) {
+        var _ = this,
+            branch = new Branch({
+                parent: _,
+                path: data.path,
+                key: data.key,
+                content: data.content,
+                children: data.children
+            });
 
-        _.data.children[key] = new Branch({
-            $: _.$,
-            parent: _,
-            hash: _.hash,
-            data: data
-        });
+        _.children.push(branch);
+
+        return branch;
+    },
+
+    removeChild: function removeChild(child) {
+        var _ = this,
+            index = _.children.indexOf(child);
+
+        _.children.splice(index, 1);
     },
 
     mount: function mount(children) {
         var _ = this;
 
-        for (key in children) {
-            child = children[key];
-            if (child.constructor && child.constructor.name === 'Branch') continue;
-            _.addChild( key, child );
+        for (var i = children.length - 1; i >= 0; i--) {
+            child = children[i];
+            _.addChild( child );
         }
     },
 
     setData: function setData(data) {
         var _ = this;
 
-        data.children = typeof data.children === 'object' ? data.children : {};
-        data.keys     = typeof data.keys     === 'object' ? data.keys     : [];
+        data = typeof data === 'object' ? data : {};
 
-        for (var key in _.data) {
-            delete _.data[key];
+        _.defineProperties({
+            writable: true
+        }, {
+            path: data.path || '',
+            content: data.content,
+            parent: data.parent
+        });
+
+        if (data.keys instanceof Array) {
+            _.defineProperties({
+                writable: true
+            }, {
+                keys: data.keys
+            });
         }
 
-        for (var key in data) {
-            _.data[key] = data[key];
-        }
+        if (data.children instanceof Array) {
+            _.defineProperties({
+                writable: true
+            }, {
+                children: []
+            });
 
-        _.mount(data.children);
+            _.mount(data.children);
+        }
     },
 
     encrypt: function encrypt(str) {
         var _ = this,
-            keys = prepKeys(_.data.keys),
+            keys = prepKeys(_.keys),
             encrypted = str;
 
         for (var i = keys.length - 1; i >= 0; i--) {
@@ -92,7 +101,7 @@ Branch.definePrototype({
 
     decrypt: function decrypt(str) {
         var _ = this,
-            keys = prepKeys(_.data.keys),
+            keys = prepKeys(_.keys),
             decrypted = str;
 
         for (var i = 0; i < keys.length; i++) {
@@ -107,21 +116,20 @@ Branch.definePrototype({
     toJSON: function toJSON() {
         var _ = this,
             result = {
-                name: _.data.name,
-                key: _.data.key,
-                path: _.data.path,
-                content: _.data.content
+                key: _.key,
+                path: _.path,
+                content: _.content
             };
 
-        if (typeof _.data.keys !== 'undefined') {
-            result.keys = _.data.keys;
+        if (typeof _.credentials !== 'undefined') {
+            result.credentials = _.credentials;
         }
 
-        if (typeof _.data.children === 'object') {
-            result.children = {};
+        if (_.children instanceof Array) {
+            result.children = [];
 
-            for (var key in _.data.children) {
-                result.children[key] = _.data.children[key].toJSON();
+            for (var i = _.children.length - 1; i >= 0; i--) {
+                result.children.push(_.children[i].toJSON());
             }
         }
 
