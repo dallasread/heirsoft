@@ -50,7 +50,6 @@ function findAncestors(branch) {
 var CustomElement = require('generate-js-custom-element'),
     Branch = require('./branch'),
     FileSaver = require('file-saver'),
-    aes256 = require('aes256'),
     CONFIG = {
         template: require('./app.html'),
         partials: {

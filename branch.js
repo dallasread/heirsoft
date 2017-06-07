@@ -1,5 +1,6 @@
 var Generator = require('generate-js'),
-    aes256 = require('aes256');
+    aes256 = require('aes256'),
+    crypto = require('crypto');
 
 function _encrypt(keys, json) {
     var encrypted = JSON.stringify(json);
@@ -28,6 +29,10 @@ function _decrypt(keys, str) {
     return decrypted;
 }
 
+function generateKey() {
+    return crypto.randomBytes(24).toString('base64').replace(/[^0-9a-zA-Z]/g, '');
+}
+
 var Branch = Generator.generate(function Branch(options) {
     var _ = this;
 
@@ -36,7 +41,7 @@ var Branch = Generator.generate(function Branch(options) {
     _.setData(options);
 
     _.defineProperties({
-        key: options.key || Math.random()
+        key: options.key || generateKey()
     });
 });
 
@@ -68,8 +73,7 @@ Branch.definePrototype({
         var _ = this;
 
         for (var i = children.length - 1; i >= 0; i--) {
-            child = children[i];
-            _.addChild( child );
+            _.addChild( children[i] );
         }
     },
 
@@ -142,27 +146,25 @@ Branch.definePrototype({
     },
 
     decrypt: function decrypt(keys, str) {
-        var _ = this;
-
         return _decrypt(keys, str);
     },
 
     toJSON: function toJSON(key) {
         var _ = this,
-            isWritable = key === _.key,
+            isWritable = false,
             result = {
                 key: _.key,
                 path: _.path,
                 content: _.content
             };
 
-        // TODO: isWritable & detecting a master key (eg. has all keys)
-        console.log(result)
-
-
         if (isWritable) {
             if (_.keys instanceof Array) {
                 result.keys = _.keys;
+            }
+
+            if (typeof _.key !== 'undefined') {
+                result.key = _.key;
             }
 
             result.permissions = _.permissions.map(function(k) {
