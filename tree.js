@@ -6,6 +6,10 @@ function SORT_ALPHA2(a, b) {
     return 0;
 }
 
+function removeFromArray(arr, item) {
+    arr.splice(arr.indexOf(item), 1);
+}
+
 var NUMBER_GROUPS = /(-?\d*\.?\d+)/g,
     SEPARATOR = '====================';
 
@@ -61,6 +65,14 @@ var CustomElement = require('generate-js-custom-element'),
             alpha: function alpha(arr) {
                 return arr.sort(SORT_ALPHA)
             },
+
+            adam: function adam(branch) {
+                return findAncestors(branch)[0];
+            },
+
+            includes: function includes(permissions, key) {
+                return permissions.indexOf(key) !== -1;
+            },
         }
     };
 
@@ -83,40 +95,54 @@ var Tree = CustomElement.createElement(CONFIG, function Tree(options) {
     CustomElement.call(_, {
         data: {
             root: root,
-            selected: undefined
+            selected: root
         }
     });
 
     var $el = _.$(_.element);
 
-    $el.on('click', 'a', function() {
-        _.set('selected', this.data('branch'));
-        return false;
-    });
-
-    $el.on('click', '[data-unselect]', function() {
-        _.unset('selected');
-        return false;
+    $el.on('click', 'sidebar a', function() {
+        if (this.data('branch')) {
+            _.set('selected', this.data('branch'));
+            return false;
+        }
     });
 
     $el.on('blur', '[data-branch-attr]', function() {
         var $this = _.$(this);
-        $this.closest('p.branch')[0].data('branch')[$this.attr('data-branch-attr')] = this.value;
+        $this.closest('.branch')[0].data('branch')[$this.attr('data-branch-attr')] = this.value;
         _.update();
     });
 
     $el.on('submit', 'form[name="decrypt"]', function() {
-        var $textarea = _.$(this).find('textarea'),
+        var $input = _.$(this).find('input'),
+            $textarea = _.$(this).find('textarea'),
+            privateKey = $input.val(),
+            publicKeys = root.keys.map(function(k) { return k.public; }),
             splat = $textarea.val().trim().split(SEPARATOR),
-            val = splat.length === 1 ? val : splat[1],
-            dataString;
+            val = splat.length === 1 ? splat[0] : splat[1],
+            dataString, childString, data, rootData;
 
         try {
-            dataString = root.decrypt( val );
-            root.setData( JSON.parse(dataString) );
+            dataString = root.decrypt( publicKeys, val );
+            rootData = JSON.parse(dataString).data;
+
+            for (var i = rootData.length - 1; i >= 0; i--) {
+                try {
+                    childString = root.decrypt( [privateKey], rootData[i] );
+                    data = JSON.parse(childString);
+                } catch (e) { }
+            }
+        } catch (e) { }
+
+        if (data) {
+            var branch = new Branch(data);
+            _.set('root', branch);
+            _.set('selected', branch);
             $textarea.val('');
+            $input.val('');
             _.update();
-        } catch (e) {
+        } else {
             alert('Invalid data. Could not restore.');
         }
 
@@ -124,38 +150,45 @@ var Tree = CustomElement.createElement(CONFIG, function Tree(options) {
     });
 
     $el.on('submit', 'form[name="encrypt"]', function() {
-        var raw = JSON.stringify( root.toJSON() ),
-            encrypted = root.encrypt(raw);
+        var encrypted = root.encrypt();
 
-        encrypted = 'This file is encrypted...\n' + SEPARATOR + '\n' + encrypted;
+        console.log(encrypted)
 
-        FileSaver.saveAs(
-            new Blob(
-                [encrypted],
-                {
-                    type: 'text/plain; charset=utf-8'
-                }
-            ),
-            'heirsoft.txt'
-        );
+        // encrypted = 'This file is encrypted...\n' + SEPARATOR + '\n' + encrypted;
+
+        // FileSaver.saveAs(
+        //     new Blob(
+        //         [encrypted],
+        //         {
+        //             type: 'text/plain; charset=utf-8'
+        //         }
+        //     ),
+        //     'heirsoft.txt'
+        // );
 
         return false;
-    });
-
-    $el.on('click', '[data-delete-key]', function() {
-        root.keys.splice(root.keys.indexOf(this.data('key')), 1);
-        _.update();
     });
 
     $el.on('click', '[data-delete-branch]', function() {
         var branch = this.data('branch');
         branch.parent.removeChild(branch);
         _.update();
+        return false;
+    });
+
+    $el.on('click', '[data-delete-key]', function() {
+        var branch = _.$(this).closest('.branch')[0].data('branch'),
+            key = _.$(this).closest('.key')[0].data('key');
+
+        removeFromArray(branch.keys, key)
+        _.update();
+        return false;
     });
 
     $el.on('click', '[data-add-key]', function() {
-        root.keys.push({});
+        _.$(this).closest('.branch')[0].data('branch').keys.push({});
         _.update();
+        return false;
     });
 
     $el.on('blur', '[data-key-attr]', function() {
@@ -174,6 +207,20 @@ var Tree = CustomElement.createElement(CONFIG, function Tree(options) {
         }
 
         _.set( 'selected', this.data('parent').addChild(data) );
+        return false;
+    });
+
+    $el.on('click', '.branch-keys input[type="checkbox"]', function() {
+        var branch = _.$(this).closest('.branch')[0].data('branch'),
+            key = _.$(this).closest('.key')[0].data('key');
+
+        if (this.checked) {
+            branch.permissions.push(key);
+        } else {
+            removeFromArray(branch.permissions, key);
+        }
+
+        _.update();
     });
 });
 

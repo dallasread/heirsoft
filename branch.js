@@ -1,13 +1,31 @@
 var Generator = require('generate-js'),
     aes256 = require('aes256');
 
-function prepKeys(keys, attr) {
-    return keys
-        .filter(function(k) {
-            return k[attr] && k[attr].length;
-        }).map(function(k) {
-            return k[attr];
-        }).sort();
+function _encrypt(keys, json) {
+    var encrypted = JSON.stringify(json);
+
+    keys = keys.sort();
+
+    for (var i = keys.length - 1; i >= 0; i--) {
+        if (!keys[i].length) continue;
+        encrypted = aes256.encrypt(keys[i], encrypted);
+    }
+
+    return encrypted;
+}
+
+function _decrypt(keys, str) {
+    var decrypted = str;
+
+    keys = keys.sort();
+
+    for (var i = 0; i < keys.length; i++) {
+        if (!keys[i].length) continue;
+        decrypted = aes256.decrypt(keys[i], decrypted);
+        if (!decrypted) return;
+    }
+
+    return decrypted;
 }
 
 var Branch = Generator.generate(function Branch(options) {
@@ -30,7 +48,8 @@ Branch.definePrototype({
                 path: data.path,
                 key: data.key,
                 content: data.content,
-                children: data.children
+                children: data.children,
+                permissions: data.permissions
             });
 
         _.children.push(branch);
@@ -67,6 +86,20 @@ Branch.definePrototype({
             parent: data.parent
         });
 
+        if (typeof _.permissions === 'undefined') {
+            _.defineProperties({
+                permissions: (
+                    data.keys ? data.keys : (
+                        (
+                            data.permissions || (
+                                data.parent ? data.parent.permissions: []
+                            )
+                        ).slice()
+                    )
+                )
+            });
+        }
+
         if (data.keys instanceof Array) {
             _.defineProperties({
                 writable: true
@@ -77,8 +110,6 @@ Branch.definePrototype({
 
         if (data.children instanceof Array) {
             _.defineProperties({
-                writable: true
-            }, {
                 children: []
             });
 
@@ -86,55 +117,71 @@ Branch.definePrototype({
         }
     },
 
-    encrypt: function encrypt(str) {
+    encrypt: function encrypt() {
         var _ = this,
-            keys = prepKeys(_.keys, 'public'),
-            encrypted = str;
+            results = [],
+            key;
 
-        for (var i = keys.length - 1; i >= 0; i--) {
-            if (!keys[i].length) continue;
-            encrypted = aes256.encrypt(keys[i], encrypted);
+        for (var i = _.keys.length - 1; i >= 0; i--) {
+            key = _.keys[i];
+
+            results.push(
+                _encrypt(
+                    [key.private],
+                    _.toJSON(key)
+                )
+            );
         }
 
-        return encrypted;
+        return _encrypt(
+            _.keys.map(function(k) {
+                return k.public;
+            }),
+            { data: results }
+        );
     },
 
-    decrypt: function decrypt(str) {
-        var _ = this,
-            keys = prepKeys(_.keys),
-            decrypted = str;
+    decrypt: function decrypt(keys, str) {
+        var _ = this;
 
-        for (var i = 0; i < keys.length; i++) {
-            if (!keys[i].length) continue;
-            decrypted = aes256.decrypt(keys[i], decrypted);
-            if (!decrypted) return;
-        }
-
-        return decrypted;
+        return _decrypt(keys, str);
     },
 
-    toJSON: function toJSON() {
+    toJSON: function toJSON(key) {
         var _ = this,
+            isWritable = key === _.key,
             result = {
                 key: _.key,
                 path: _.path,
                 content: _.content
             };
 
-        if (typeof _.credentials !== 'undefined') {
-            result.credentials = _.credentials;
+        // TODO: isWritable & detecting a master key (eg. has all keys)
+        console.log(result)
+
+
+        if (isWritable) {
+            if (_.keys instanceof Array) {
+                result.keys = _.keys;
+            }
+
+            result.permissions = _.permissions.map(function(k) {
+                return k.private;
+            });
         }
 
         if (_.children instanceof Array) {
             result.children = [];
 
             for (var i = _.children.length - 1; i >= 0; i--) {
-                result.children.push(_.children[i].toJSON());
+                if (isWritable || _.children[i].permissions.indexOf(key) !== -1) {
+                    result.children.push( _.children[i].toJSON(key) );
+                }
             }
         }
 
         return result;
-    },
+    }
 });
 
 if (typeof window !== 'undefined') {

@@ -37,4 +37,4 @@ var css = {
     ]
 };
 
-module.exports = [js];
+module.exports = [js, css];

@@ -1,51 +1,82 @@
 {{#if root}}
-    <ul>
-        {{>branch branch=root}}
-    </ul>
-
-    <hr>
-
-    {{#with selected}}
-        <p class="branch" branch:{{this}}>
-            <a href="#" data-unselect>x</a><br>
-            <input type="text" data-branch-attr="path" value::{{path}}>
-            ({{@fullPath(this)}})
-            <br>
-            <textarea data-branch-attr="content" value::{{content}}></textarea>
-        </p>
-    {{/with}}
-
-    <hr>
-
-    <p>
-        KEYS:
-
+    <sidebar>
         <ul>
-            {{#each root.keys}}
-                <li class="key" key:{{this}}>
-                    Name: <input type="text" value::{{name}} data-key-attr="name"><br>
-                    Public: <input type="text" value::{{public}} data-key-attr="public"><br>
-                    Private: <input type="text" value::{{private}} data-key-attr="private"><br>
-                    <a href="#" key:{{this}} data-delete-key>x</a>
-                </li>
-            {{/each}}
-
-            <li>
-                <a href="#" data-add-key>+ Add</a>
-            </li>
+            {{>branch branch=root}}
         </ul>
-    </p>
 
-    <hr>
+        <hr>
 
-    <form name="decrypt">
-        <textarea></textarea><br>
-        <button type="submit">Restore</button>
-    </form>
+        <form name="encrypt">
+            <button>Download</button>
+        </form>
 
-    <hr>
+        <hr>
 
-    <form name="encrypt">
-        <button>Download</button>
-    </form>
+        <form name="decrypt">
+            <input type="text" placeholder="Private Key">
+            <textarea placeholder="Content"></textarea><br>
+            <button type="submit">Restore</button>
+        </form>
+    </sidebar>
+
+    <main>
+        {{#with selected=selected root=root}}
+            {{#if selected}}
+                <div class="branch" branch:{{selected}}>
+                    {{#if parent}}
+                        <a href="#" class="delete-child" data-delete-branch branch:{{selected}}>Delete</a>
+                    {{/if}}
+
+                    <input type="text" data-branch-attr="path" value::{{selected.path}}>
+
+                    {{#if selected.keys}}
+                        <p>
+                            KEYS:
+
+                            <ul>
+                                {{#each selected.keys}}
+                                    <li class="key" key:{{this}}>
+                                        Name: <input type="text" value::{{name}} data-key-attr="name"><br>
+                                        Public: <input type="text" value::{{public}} data-key-attr="public"><br>
+                                        Private: <input type="text" value::{{private}} data-key-attr="private"><br>
+                                        <a href="#" data-delete-key>x</a>
+                                    </li>
+                                {{/each}}
+
+                                <li>
+                                    <a href="#" data-add-key>+ Add</a>
+                                </li>
+                            </ul>
+                        </p>
+                    {{else}}
+                        <ul class="branch-keys">
+                            {{#each selected.parent.permissions permissions=selected.permissions}}
+                                <li class="key" key:{{this}}>
+                                    <label>
+                                        {{#if @includes(permissions, this)}}
+                                            <span></span>
+                                            <input type="checkbox" checked>
+                                        {{else}}
+                                            <input type="checkbox">
+                                        {{/if}}
+                                        {{name}}
+                                    </label>
+                                </li>
+                            {{/each}}
+                        </ul>
+
+                        <br>
+
+                        {{#if children}}
+                            <ul>
+                                {{>branch branch=selected}}
+                            </ul>
+                        {{else}}
+                            <textarea data-branch-attr="content" value::{{content}}></textarea>
+                        {{/if}}
+                    {{/if}}
+                </div>
+            {{/if}}
+        {{/with}}
+    </main>
 {{/if}}

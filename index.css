@@ -1,0 +1,96 @@
+@import "css/reset";
+
+sidebar {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 200px;
+    background: #666;
+    color: #ddd;
+    line-height: 1;
+
+    a {
+        display: block;
+        padding: 10px;
+
+        &:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+    }
+
+    .mini {
+        font-size: 10px;
+        display: inline-block;
+        color: rgba(255, 255, 255, 0.3);
+
+        a {
+            padding-top: 0;
+        }
+    }
+
+    li li a {
+        padding-left: 20px;
+    }
+
+    li li li a {
+        padding-left: 30px;
+    }
+
+    li li li li a {
+        padding-left: 40px;
+    }
+
+    li li li li li a {
+        padding-left: 50px;
+    }
+
+    li li li li li li a {
+        padding-left: 60px;
+    }
+
+    li li li li li li li a {
+        padding-left: 70px;
+    }
+
+    li li li li li li li li a {
+        padding-left: 80px;
+    }
+
+    hr {
+        display: none;
+    }
+
+    button {
+        background: rgba(0, 0, 0, 0.3);
+        display: block;
+        padding: 10px;
+        margin: 10px;
+        width: calc(100% - 20px);
+    }
+}
+
+main {
+    margin-left: 200px;
+
+    textarea, input[type="text"] {
+        width: 100%;
+        border: 1px solid #eee;
+        padding: 7px;
+    }
+
+    textarea {
+        height: 400px;
+    }
+
+    .branch {
+        position: relative;
+
+        .delete-child {
+            position: absolute;
+            right: 10px;
+            top: 8px;
+        }
+    }
+}
