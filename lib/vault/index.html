@@ -1,10 +1,10 @@
-{{#if root}}
+{{#if vault}}
     <sidebar>
         <ul>
-            {{>branch branch=root root=root}}
+            {{>branch branch=vault vault=vault selected=selected}}
         </ul>
 
-        {{#if root.isWritable}}
+        {{#if vault.isWritable}}
             <hr>
 
             <form name="encrypt">
@@ -22,16 +22,16 @@
     </sidebar>
 
     <main>
-        {{#with selected=selected root=root}}
+        {{#with selected=selected vault=vault}}
             {{#if selected}}
                 <div class="branch" branch:{{selected}}>
-                    {{#if selected.parent && root.isWritable}}
+                    {{#if selected.parent && vault.isWritable}}
                         <a href="#" class="delete-child" data-delete-branch branch:{{selected}}>Delete</a>
                     {{/if}}
 
-                    <input type="text" data-branch-attr="path" value::{{selected.path}} disabled::{{!root.isWritable}}>
+                    <input type="text" data-branch-attr="path" value::{{selected.path}} disabled::{{!vault.isWritable}}>
 
-                    {{#if root.isWritable && root === selected}}
+                    {{#if vault.isWritable && vault === selected}}
                         <p>
                             Everybody gets two passwords
                         </p>
@@ -74,7 +74,7 @@
                             </tbody>
                         </table>
                     {{else}}
-                        {{#if root.isWritable}}
+                        {{#if vault.isWritable}}
                             <ul class="branch-keys">
                                 {{#each selected.parent.permissions permissions=selected.permissions}}
                                     <li class="key" key:{{this}}>
@@ -97,7 +97,7 @@
                                 {{>branch branch=selected}}
                             </ul>
                         {{else}}
-                            <textarea data-branch-attr="content" value::{{selected.content}} disabled::{{!root.isWritable}}></textarea>
+                            <textarea data-branch-attr="content" value::{{selected.content}} disabled::{{!vault.isWritable}}></textarea>
                         {{/if}}
                     {{/if}}
                 </div>

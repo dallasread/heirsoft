@@ -1,15 +1,15 @@
-<li class="branch">
-    <a href="#" branch:{{branch}}>
+<li class="branch {{!selected || 'selected'}}">
+    <a href="#" data-go-branch branch:{{branch}}>
         {{branch.path || 'Untitled'}}
     </a>
 
     {{#if branch.children}}
         <ul>
             {{#each @alpha(branch.children)}}
-                {{>branch branch=this root=root}}
+                {{>branch branch=this vault=vault}}
             {{/each}}
 
-            {{#if root.isWritable}}
+            {{#if vault.isWritable}}
                 <li class="mini">
                     <a href="#" data-add-child parent:{{branch}}>
                         + File

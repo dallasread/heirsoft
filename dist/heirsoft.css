@@ -1,0 +1,150 @@
+/*
+   Revised
+   http://meyerweb.com/eric/tools/css/reset/
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+html, body {
+  font-size: 15px;
+  line-height: 1.5;
+  font-family: Helvetica Neue, Helvetica, Arial, Sans Serif;
+  /* HTML5 display-role reset for older browsers */ }
+  html div, html span, html applet, html object, html iframe,
+  html h1, html h2, html h3, html h4, html h5, html h6, html p, html blockquote, html pre,
+  html a, html abbr, html acronym, html address, html big, html cite, html code,
+  html del, html dfn, html em, html img, html ins, html kbd, html q, html s, html samp,
+  html small, html strike, html strong, html sub, html sup, html tt, html var,
+  html b, html u, html center,
+  html dl, html dt, html dd, html ol, html ul, html li,
+  html fieldset, html form, html label, html legend,
+  html table, html caption, html tbody, html tfoot, html thead, html tr, html th, html td,
+  html article, html aside, html canvas, html details, html embed,
+  html figure, html figcaption, html footer, html header, html hgroup,
+  html menu, html nav, html output, html ruby, html section, html summary,
+  html time, html mark, html audio, html video,
+  html input, html textarea, html select, html button, body div, body span, body applet, body object, body iframe,
+  body h1, body h2, body h3, body h4, body h5, body h6, body p, body blockquote, body pre,
+  body a, body abbr, body acronym, body address, body big, body cite, body code,
+  body del, body dfn, body em, body img, body ins, body kbd, body q, body s, body samp,
+  body small, body strike, body strong, body sub, body sup, body tt, body var,
+  body b, body u, body center,
+  body dl, body dt, body dd, body ol, body ul, body li,
+  body fieldset, body form, body label, body legend,
+  body table, body caption, body tbody, body tfoot, body thead, body tr, body th, body td,
+  body article, body aside, body canvas, body details, body embed,
+  body figure, body figcaption, body footer, body header, body hgroup,
+  body menu, body nav, body output, body ruby, body section, body summary,
+  body time, body mark, body audio, body video,
+  body input, body textarea, body select, body button {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: inherit;
+    font: inherit;
+    vertical-align: inherit;
+    line-height: inherit;
+    background: none;
+    box-shadow: none;
+    color: inherit; }
+  html i, body i {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: inherit;
+    /*font: inherit;*/
+    vertical-align: baseline;
+    background: none;
+    box-shadow: none;
+    color: inherit; }
+  html article, html aside, html details, html figcaption, html figure,
+  html footer, html header, html hgroup, html menu, html nav, html section, body article, body aside, body details, body figcaption, body figure,
+  body footer, body header, body hgroup, body menu, body nav, body section {
+    display: block; }
+  html ol, html ul, body ol, body ul {
+    list-style: none; }
+  html blockquote, html q, body blockquote, body q {
+    quotes: none; }
+  html blockquote:before, html blockquote:after,
+  html q:before, html q:after, body blockquote:before, body blockquote:after,
+  body q:before, body q:after {
+    content: '';
+    content: none; }
+  html table, body table {
+    border-collapse: collapse;
+    border-spacing: 0; }
+  html a, body a {
+    color: inherit;
+    text-decoration: inherit;
+    text-transform: inherit; }
+  html img, body img {
+    max-width: 100%; }
+  html strong, html b, body strong, body b {
+    font-weight: bold; }
+  html i, html em, body i, body em {
+    font-style: oblique; }
+
+html {
+  box-sizing: border-box; }
+
+*, *:before, *:after {
+  box-sizing: inherit; }
+
+main {
+  margin-left: 200px; }
+  main textarea, main input[type="text"] {
+    width: 100%;
+    border: 1px solid #eee;
+    padding: 7px; }
+  main textarea {
+    height: 400px; }
+  main .branch {
+    position: relative; }
+    main .branch .delete-child {
+      position: absolute;
+      right: 10px;
+      top: 8px; }
+
+sidebar {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 200px;
+  background: #666;
+  color: #ddd;
+  line-height: 1;
+  overflow: auto; }
+  sidebar a {
+    display: block;
+    padding: 10px; }
+    sidebar a:hover {
+      background: rgba(0, 0, 0, 0.3); }
+  sidebar .mini {
+    font-size: 10px;
+    display: inline-block;
+    color: rgba(255, 255, 255, 0.3); }
+    sidebar .mini a {
+      padding-top: 0; }
+  sidebar li li a {
+    padding-left: 20px; }
+  sidebar li li li a {
+    padding-left: 30px; }
+  sidebar li li li li a {
+    padding-left: 40px; }
+  sidebar li li li li li a {
+    padding-left: 50px; }
+  sidebar li li li li li li a {
+    padding-left: 60px; }
+  sidebar li li li li li li li a {
+    padding-left: 70px; }
+  sidebar li li li li li li li li a {
+    padding-left: 80px; }
+  sidebar hr {
+    display: none; }
+  sidebar button {
+    background: rgba(0, 0, 0, 0.3);
+    display: block;
+    padding: 10px;
+    margin: 10px;
+    width: calc(100% - 20px); }

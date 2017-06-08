@@ -1,1 +1,1 @@
-require('./tree');
+require('./lib/heirsoft');

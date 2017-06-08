@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Heirsoft</title>
+    <title>Heirsoft - Vault</title>
 </head>
 <body>
-    <div id="tree"></div>
+    <div id="vault"></div>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script type="text/javascript" src="heirsoft.js"></script>
-    <link rel="stylesheet" type="text/css" href="heirsoft.css">
+    <script type="text/javascript" src="../../dist/heirsoft.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../dist/heirsoft.css">
     <script type="text/javascript">
-        var tree = new window.Tree({
+        var vault = new window.Vault({
             $: jQuery.noConflict(),
             data: {
                 keys: [{
@@ -24,7 +24,9 @@
                     }
                 ]
             }
-        }).appendTo(document.getElementById('tree'));
+        });
+
+        document.getElementById('vault').append(vault.element);
     </script>
 </body>
 </html>
