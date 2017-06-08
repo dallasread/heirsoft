@@ -1,11 +1,3 @@
-function SORT_ALPHA2(a, b) {
-    if (!b.path.length)  return -1;
-    if (!a.path.length)  return 1;
-    if (a.path < b.path) return -1;
-    if (a.path > b.path) return 1;
-    return 0;
-}
-
 function removeFromArray(arr, item) {
     arr.splice(arr.indexOf(item), 1);
 }
@@ -34,7 +26,7 @@ function SORT_ALPHA(a, b) {
     }
 
     return 0;
-};
+}
 
 function findAncestors(branch) {
     var ancestors = [branch];
@@ -62,7 +54,7 @@ var CustomElement = require('generate-js-custom-element'),
             },
 
             alpha: function alpha(arr) {
-                return arr.sort(SORT_ALPHA)
+                return arr.sort(SORT_ALPHA);
             },
 
             adam: function adam(branch) {
@@ -117,22 +109,10 @@ var Tree = CustomElement.createElement(CONFIG, function Tree(options) {
         var $input = _.$(this).find('input'),
             $textarea = _.$(this).find('textarea'),
             privateKey = $input.val(),
-            publicKeys = root.keys.map(function(k) { return k.public; }),
+            publicKeys = _.get('root.keys').map(function(k) { return k.public; }),
             splat = $textarea.val().trim().split(SEPARATOR),
-            val = splat.length === 1 ? splat[0] : splat[1],
-            dataString, childString, data, rootData;
-
-        try {
-            dataString = root.decrypt( publicKeys, val );
-            rootData = JSON.parse(dataString).data;
-
-            for (var i = rootData.length - 1; i >= 0; i--) {
-                try {
-                    childString = root.decrypt( [privateKey], rootData[i] );
-                    data = JSON.parse(childString);
-                } catch (e) { }
-            }
-        } catch (e) { }
+            str = splat.length === 1 ? splat[0] : splat[1],
+            data = _.get('root').decrypt(publicKeys, [privateKey], str);
 
         if (data) {
             var branch = new Branch(data);
@@ -149,21 +129,21 @@ var Tree = CustomElement.createElement(CONFIG, function Tree(options) {
     });
 
     $el.on('submit', 'form[name="encrypt"]', function() {
-        var encrypted = root.encrypt();
+        var encrypted = _.get('root').encrypt();
 
-        console.log(encrypted)
+        console.log(encrypted);
 
-        // encrypted = 'This file is encrypted...\n' + SEPARATOR + '\n' + encrypted;
+        encrypted = 'This file is encrypted... Decrypt it with each public key sorted alphabetically using AES-256. After parsing the returned JSON array, use all of your private keys (probably only one) to decrypt each of the returned chunks. Only one chunk will successfully decrypt.\n' + SEPARATOR + '\n' + encrypted;
 
-        // FileSaver.saveAs(
-        //     new Blob(
-        //         [encrypted],
-        //         {
-        //             type: 'text/plain; charset=utf-8'
-        //         }
-        //     ),
-        //     'heirsoft.txt'
-        // );
+        FileSaver.saveAs(
+            new Blob(
+                [encrypted],
+                {
+                    type: 'text/plain; charset=utf-8'
+                }
+            ),
+            'heirsoft.txt'
+        );
 
         return false;
     });
@@ -179,20 +159,24 @@ var Tree = CustomElement.createElement(CONFIG, function Tree(options) {
         var branch = _.$(this).closest('.branch')[0].data('branch'),
             key = _.$(this).closest('.key')[0].data('key');
 
-        removeFromArray(branch.keys, key)
+        removeFromArray(branch.keys, key);
         _.update();
         return false;
     });
 
     $el.on('click', '[data-add-key]', function() {
-        _.$(this).closest('.branch')[0].data('branch').keys.push({});
+        _.$(this).closest('.branch')[0].data('branch').keys.push({
+            name: _.get('root').generateKey(10),
+            public: _.get('root').generateKey(10),
+            private: _.get('root').generateKey(10),
+        });
         _.update();
         return false;
     });
 
     $el.on('blur', '[data-key-attr]', function() {
         var $this = _.$(this);
-        $this.closest('li.key')[0].data('key')[$this.attr('data-key-attr')] = this.value;
+        $this.closest('.key')[0].data('key')[$this.attr('data-key-attr')] = this.value;
         _.update();
     });
 
@@ -201,8 +185,6 @@ var Tree = CustomElement.createElement(CONFIG, function Tree(options) {
 
         if (_.$(this).attr('data-type') === 'folder') {
             data.children = [];
-        } else {
-            data.content = 'Sample file.';
         }
 
         _.set( 'selected', this.data('parent').addChild(data) );

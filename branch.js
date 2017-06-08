@@ -3,7 +3,7 @@ var Generator = require('generate-js'),
     crypto = require('crypto');
 
 function _encrypt(keys, json) {
-    var encrypted = JSON.stringify(json);
+    var encrypted = typeof json === 'string' ? json : JSON.stringify(json);
 
     keys = keys.sort();
 
@@ -29,8 +29,29 @@ function _decrypt(keys, str) {
     return decrypted;
 }
 
-function generateKey() {
-    return crypto.randomBytes(24).toString('base64').replace(/[^0-9a-zA-Z]/g, '');
+function findAllByAttr(items, ids, attr) {
+    var result = [];
+
+    for (var i = items.length - 1; i >= 0; i--) {
+        if (ids.indexOf(items[i][attr]) !== -1) {
+            result.push(items[i]);
+        }
+    }
+
+    return result;
+}
+
+function applyPermissionKeys(keys, children) {
+    var child, i;
+    for (i = children.length - 1; i >= 0; i--) {
+        child = children[i];
+
+        child.permissions = findAllByAttr(keys, child.permissions, 'private');
+
+        if (child.children instanceof Array) {
+            applyPermissionKeys(keys, child.children);
+        }
+    }
 }
 
 var Branch = Generator.generate(function Branch(options) {
@@ -41,7 +62,7 @@ var Branch = Generator.generate(function Branch(options) {
     _.setData(options);
 
     _.defineProperties({
-        key: options.key || generateKey()
+        key: options.key || _.generateKey()
     });
 });
 
@@ -86,7 +107,7 @@ Branch.definePrototype({
             writable: true
         }, {
             path: data.path || '',
-            content: data.content,
+            content: data.content || '',
             parent: data.parent
         });
 
@@ -110,7 +131,12 @@ Branch.definePrototype({
             }, {
                 keys: data.keys
             });
+
         }
+
+        _.defineProperties({
+            isWritable: data.keys instanceof Array && !!data.keys.length
+        });
 
         if (data.children instanceof Array) {
             _.defineProperties({
@@ -123,16 +149,32 @@ Branch.definePrototype({
 
     encrypt: function encrypt() {
         var _ = this,
+            privateKeys = _.keys.filter(function(k) {
+                return k.private && k.private.length;
+            }).map(function(k) {
+                return k.private;
+            }),
             results = [],
             key;
 
-        for (var i = _.keys.length - 1; i >= 0; i--) {
-            key = _.keys[i];
+        if (_.keys.length > 1) {
+            for (var i = _.keys.length - 1; i >= 0; i--) {
+                key = _.keys[i];
 
+                results.push(
+                    _encrypt(
+                        [key.private],
+                        _.toJSON(key)
+                    )
+                );
+            }
+        }
+
+        if (_.isWritable) {
             results.push(
                 _encrypt(
-                    [key.private],
-                    _.toJSON(key)
+                    privateKeys,
+                    _.toJSON(key, true)
                 )
             );
         }
@@ -145,26 +187,44 @@ Branch.definePrototype({
         );
     },
 
-    decrypt: function decrypt(keys, str) {
-        return _decrypt(keys, str);
+    decrypt: function decrypt(publicKeys, privateKeys, str) {
+        var data, chunks, chunk;
+
+        try {
+            str = _decrypt( publicKeys, str );
+            chunks = JSON.parse(str).data;
+
+            for (var i = chunks.length - 1; i >= 0; i--) {
+                try {
+                    chunk = _decrypt( privateKeys, chunks[i] );
+                    data = JSON.parse(chunk);
+
+                    if (data.keys instanceof Array) {
+                        applyPermissionKeys(data.keys, data.children);
+                    }
+
+                    return data;
+                } catch (e) { }
+            }
+        } catch (e) { }
+
+        return data;
     },
 
-    toJSON: function toJSON(key) {
+    toJSON: function toJSON(key, isWritable) {
         var _ = this,
-            isWritable = false,
             result = {
                 key: _.key,
-                path: _.path,
-                content: _.content
+                path: _.path
             };
+
+        if (typeof _.content !== 'undefined') {
+            result.content = _.content;
+        }
 
         if (isWritable) {
             if (_.keys instanceof Array) {
                 result.keys = _.keys;
-            }
-
-            if (typeof _.key !== 'undefined') {
-                result.key = _.key;
             }
 
             result.permissions = _.permissions.map(function(k) {
@@ -177,12 +237,16 @@ Branch.definePrototype({
 
             for (var i = _.children.length - 1; i >= 0; i--) {
                 if (isWritable || _.children[i].permissions.indexOf(key) !== -1) {
-                    result.children.push( _.children[i].toJSON(key) );
+                    result.children.push( _.children[i].toJSON(key, isWritable) );
                 }
             }
         }
 
         return result;
+    },
+
+    generateKey: function generateKey(length) {
+        return crypto.randomBytes(length || 24).toString('base64').replace(/[^0-9a-zA-Z]/g, '');
     }
 });
 

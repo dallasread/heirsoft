@@ -10,6 +10,7 @@ sidebar {
     background: #666;
     color: #ddd;
     line-height: 1;
+    overflow: auto;
 
     a {
         display: block;
