@@ -1,0 +1,31 @@
+content {
+    display: block;
+
+    h1, h2, h3, h4, h5, h6, p, ul, ol {
+        margin-bottom: 20px;
+    }
+
+    h1, h3 {
+        font-family: Nunito, Helvetica, Arial, sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-size: 130%;
+    }
+
+    p, td, th {
+        font-size: 90%;
+        color: rgba(0, 0, 0, 0.6);
+    }
+
+    hr {
+        height: 1px;
+        background: rgba(0, 0, 0, 0.2);
+        border: 0;
+        width: 100%;
+        margin-top: 1.5em;
+    }
+
+    .md {
+        margin-bottom: 40px;
+    }
+}

@@ -1,0 +1,109 @@
+{{#if tree}}
+    <sidebar>
+        <ul>
+            {{>branch branch=tree tree=tree selected=selected}}
+        </ul>
+    </sidebar>
+
+    <article>
+        <content>
+            <div class="container">
+                {{#with selected=selected tree=tree}}
+                    {{#if selected}}
+                        <div class="branch" branch:{{selected}}>
+                            {{#if selected.parent && tree.isWritable}}
+                                <a href="#" class="delete-child" data-delete-branch branch:{{selected}}>Delete</a>
+                            {{/if}}
+
+                            <input type="text" data-branch-attr="path" value::{{selected.path}} disabled::{{!tree.isWritable}}>
+
+                            {{#if tree.isWritable && tree === selected}}
+                                <form name="encrypt">
+                                    <button>Download</button>
+                                </form>
+
+
+                                <ol>
+
+                                </ol>
+                                <p>
+                                    Create a public key for each of your trusted circle. All {{#if selected.keys.length > 1}}{{selected.keys.length}}{{/if}} public keys are required to open the vault <em>every</em> time. Each person also needs a private key, which gives them access to ONLY the files they are permitted to.
+                                </p>
+
+                                <p>
+                                    <strong>
+                                        Note: To edit this vault in the future, you'll need to supply all {{#if selected.keys.length > 1}}{{selected.keys.length}}{{/if}} private keys.
+                                    </strong>
+                                </p>
+
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Public</th>
+                                            <th>Private</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {{#each selected.keys}}
+                                            <tr class="key" key:{{this}}>
+                                                <td>
+                                                    <input type="text" value::{{name}} data-key-attr="name">
+                                                </td>
+                                                <td>
+                                                    <input type="text" value::{{public}} data-key-attr="public">
+                                                </td>
+                                                <td>
+                                                    <input type="text" value::{{private}} data-key-attr="private">
+                                                </td>
+                                                <td>
+                                                    <a href="#" data-delete-key>x</a>
+                                                </td>
+                                            </tr>
+                                        {{/each}}
+
+                                        <tr>
+                                            <td>
+                                                <a href="#" data-add-key>+ Add</a>
+                                            </td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            {{else}}
+                                {{#if tree.isWritable}}
+                                    <ul class="branch-keys">
+                                        {{#each selected.parent.permissions permissions=selected.permissions}}
+                                            <li class="key" key:{{this}}>
+                                                <label>
+                                                    {{#if @includes(permissions, this)}}
+                                                        <span></span>
+                                                        <input type="checkbox" checked>
+                                                    {{else}}
+                                                        <input type="checkbox">
+                                                    {{/if}}
+                                                    {{name}}
+                                                </label>
+                                            </li>
+                                        {{/each}}
+                                    </ul>
+                                {{/if}}
+
+                                {{#if selected.children}}
+                                    <ul>
+                                        {{>branch branch=selected}}
+                                    </ul>
+                                {{else}}
+                                    <textarea data-branch-attr="content" value::{{selected.content}} disabled::{{!tree.isWritable}}></textarea>
+                                {{/if}}
+                            {{/if}}
+                        </div>
+                    {{/if}}
+                {{/with}}
+            </div>
+        </content>
+    </article>
+{{/if}}

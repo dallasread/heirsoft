@@ -1,0 +1,124 @@
+site-header {
+    font-family: Nunito, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    font-size: 20px;
+    font-weight: 200;
+    display: block;
+    background: $blue;
+    color: rgba(255, 255, 255, 0.67);
+    border-bottom: 3px solid $red;
+    letter-spacing: 2px;
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    font-size: 15px;
+    z-index: 999;
+
+    .message {
+        display: block;
+        background: #708088;
+        color: rgba(255, 255, 255, 0.5);
+        padding: 10px;
+        text-transform: uppercase;
+        font-size: 65%;
+        text-align: center;
+
+        .ellipsis {
+            width: 90%;
+        }
+    }
+
+    .close {
+        margin-left: 25px;
+        color: rgba(255, 255, 255, 0.5);
+        background: rgba(255, 255, 255, 0.3);
+        display: inline-block;
+        border-radius: 50%;
+        padding: 0px 0.5em;
+        font-size: 75%;
+        vertical-align: middle;
+    }
+
+    nav {
+        display: block;
+
+        &:after {
+            content: ' ';
+            display: block;
+            clear: both;
+        }
+
+        ul {
+            float: left;
+
+            &.meta {
+                float: right;
+                margin-top: 5px;
+                text-align: right;
+            }
+
+            li {
+                display: inline-block;
+                vertical-align: middle;
+
+                a, p {
+                    display: inline-block;
+                    padding: 15px;
+                    text-transform: uppercase;
+                    font-size: 80%;
+
+                    &.highlight {
+                        font-size: 120%;
+                        color: #fff;
+                        font-family: Palatino, Georgia, Times, serif;
+                        background: $red;
+                        font-weight: bold;
+                        text-transform: none;
+                        padding: 15px 30px;
+                        letter-spacing: 0;
+                    }
+                }
+
+                &.logo .mobile-only {
+                    font-size: 140%;
+                    height: 1em;
+                }
+            }
+        }
+    }
+}
+
+site-header-placeholder {
+    display: block;
+    height: 96px;
+}
+
+@media (max-width: 840px) {
+    site-header {
+        .meta {
+            width: 6em;
+        }
+
+        .core {
+            width: calc(100% - 6em);
+
+            .site-name {
+                max-width: calc(100% - 3em);
+
+                a {
+                    max-width: 100%;
+                }
+            }
+        }
+    }
+}
+
+.ellipsis {
+    margin: 0 auto;
+    width: 100%;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

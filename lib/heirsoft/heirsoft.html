@@ -1,0 +1,25 @@
+{{>header title=vault.tree.path}}
+
+{{#if vault}}
+    <div class="vault-wrapper"></div>
+{{else}}
+    <sidebar>
+        <ul></ul>
+    </sidebar>
+
+    <article>
+        <content>
+            <div class="container">
+                <a href="#" data-create-vault>
+                    Create New Vault
+                </a>
+
+                <br>
+
+                <a href="#">
+                    Open A Vault
+                </a>
+            </div>
+        </content>
+    </article>
+{{/if}}

@@ -1,0 +1,95 @@
+$tan: #484138;
+
+article {
+    display: block;
+    font-family: Palatino, Georgia, Times, serif;
+    margin-left: 280px;
+    line-height: 1.6;
+    font-size: 20px;
+
+    textarea, input[type="text"] {
+        width: 100%;
+        border: 1px solid #eee;
+        padding: 7px;
+        font-size: inherit;
+        outline: none;
+    }
+
+    textarea {
+        height: 400px;
+    }
+
+    header {
+        position: relative;
+        display: block;
+        background: $tan;
+        background-size: cover;
+        background-position: 50% 50%;
+        overflow: hidden;
+        text-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+
+        h1 {
+            color: #fff;
+            font-size: 222%;
+        }
+
+        p {
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 10px;
+        }
+
+        .bg {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            opacity: 0.08;
+            width: 100%;
+        }
+    }
+
+    .container {
+        width: 100%;
+        max-width: 840px;
+        margin: 0 auto;
+        padding: 80px 50px;
+
+        @media (max-width: 640px) {
+            padding: 50px 15px;
+        }
+    }
+
+    .notice, .notice-2, .notice-3 {
+        font-family: Nunito, Helvetica, Arial, sans-serif;
+        text-transform: uppercase;
+        font-size: 75%;
+        color: $red;
+        display: block;
+        margin-top: -20px;
+        margin-bottom: 40px;
+    }
+
+    .notice-2 {
+        display: block;
+        margin-top: 80px;
+        color: rgba(0, 0, 0, 0.5);
+        text-align: center;
+    }
+
+    .notice-3 {
+        margin-top: 50px;
+    }
+
+    @media (max-width: 840px) {
+        margin-left: 0;
+    }
+
+    @media (max-width: 1080px) {
+        font-size: 100%;
+    }
+
+    @media (max-width: 640px) {
+        font-size: 90%;
+    }
+}

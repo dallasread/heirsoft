@@ -1,27 +1,28 @@
-<li class="branch {{!selected || 'selected'}}">
+<li class="branch {{selected === branch ? 'active' : ''}} {{#if !selected.children.length}}{{branch === selected.parent ? ' parent-of-active' : ''}}{{/if}} {{branch.children ? ' has-children' : ''}}">
     <a href="#" data-go-branch branch:{{branch}}>
-        {{branch.path || 'Untitled'}}
+        <span>
+            {{branch.path || 'Untitled'}}
+        </span>
     </a>
 
     {{#if branch.children}}
+        {{#if tree.isWritable}}
+            <div class="meta">
+                <button data-add-child parent:{{branch}}>
+                    + File
+                </button>
+
+                <button data-add-child data-type="folder" parent:{{branch}}>
+                    + Folder
+                </button>
+            </div>
+        {{/if}}
+
         <ul>
             {{#each @alpha(branch.children)}}
-                {{>branch branch=this vault=vault}}
+                {{>branch branch=this tree=tree}}
             {{/each}}
 
-            {{#if vault.isWritable}}
-                <li class="mini">
-                    <a href="#" data-add-child parent:{{branch}}>
-                        + File
-                    </a>
-                </li>
-
-                <li class="mini">
-                    <a href="#" data-add-child data-type="folder" parent:{{branch}}>
-                        + Folder
-                    </a>
-                </li>
-            {{/if}}
         </ul>
     {{/if}}
 </li>
