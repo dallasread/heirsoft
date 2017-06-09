@@ -1,0 +1,30 @@
+<form name="encrypt">
+    <button class="button-small">Download Vault</button>
+</form>
+
+<ol>
+    <li>
+        Choose trusted people. Each will receive 2 keys (passwords). One is a "public" key and the other is "private".
+    </li>
+
+    <li>
+        <em>All {{#if selected.keys.length > 2}}{{selected.keys.length}}{{/if}}</em> public keys are required to open the vault <em>every</em> time.
+    </li>
+
+    <li>
+         Each person also needs a private key, which gives them access to ONLY the files they are permitted to see.
+    </li>
+
+    <li>
+        <strong>
+            To edit this vault in the future, you'll need to supply <em>all {{#if selected.keys.length > 2}}{{selected.keys.length}}{{/if}}</em> private keys.
+        </strong>
+    </li>
+
+    <li>
+        To save your file for later, just click "Download Vault" and keep it in a safe place. You can upload it later to edit it. We don't save any data. No data ever touches our servers. All of your data is stored IN YOUR VAULT FILE.
+    </li>
+</ol>
+
+{{>tree-matrix keys=selected.keys}}
+

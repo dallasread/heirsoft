@@ -1,0 +1,34 @@
+<p>
+    <input type="text" data-branch-attr="path" value::{{selected.path}} disabled::{{!tree.isWritable}}>
+</p>
+
+{{#if tree.isWritable && tree === selected}}
+    {{>tree-editor tree=selected}}
+{{else}}
+    {{#if tree.isWritable && selected.parent.permissions.length}}
+        <ul class="branch-keys">
+            <li>Who has access to this item?</li>
+            {{#each selected.parent.permissions permissions=selected.permissions}}
+                <li class="key" key:{{this}}>
+                    <label>
+                        {{#if @includes(permissions, this)}}
+                            <span></span>
+                            <input type="checkbox" checked>
+                        {{else}}
+                            <input type="checkbox">
+                        {{/if}}
+                        {{name}}
+                    </label>
+                </li>
+            {{/each}}
+        </ul>
+    {{/if}}
+
+    {{#if selected.children}}
+        <!-- <ul>
+            {{>branch branch=selected}}
+        </ul> -->
+    {{else}}
+        <textarea data-branch-attr="content" value::{{selected.content}} disabled::{{!tree.isWritable}}></textarea>
+    {{/if}}
+{{/if}}

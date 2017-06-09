@@ -7,11 +7,17 @@ article {
     line-height: 1.6;
     font-size: 20px;
 
+    &.full-width {
+        margin-left: 0;
+    }
+
     textarea, input[type="text"] {
         width: 100%;
         border: 1px solid #eee;
         padding: 7px;
         font-size: inherit;
+        font-family: inherit;
+        line-height: inherit;
         outline: none;
     }
 

@@ -1,0 +1,48 @@
+<article class="full-width">
+    <content>
+        <div class="container">
+            {{#if step === 1}}
+                <p>To open your vault, you'll need:</p>
+
+                <ul>
+                    <li>The contents of your vault file.</li>
+                    <li><em>All</em> of the public keys for the vault.</li>
+                    <li>At least one of the private keys for the vault. If you would like to edit the vault, you'll need <em>all</em> private keys.</li>
+                </ul>
+
+                <form name="start">
+                    <button type="submit">
+                        Get Started &raquo;
+                    </button>
+                </form>
+            {{else}}
+                {{#if step === 2}}
+                    <form name="opener-content">
+                        <textarea name="contents" placeholder="Contents of your vault file." value::{{contents}}></textarea>
+                        <button type="submit" class="float-right">
+                            Continue &raquo;
+                        </button>
+                    </form>
+                {{else}}
+                    {{#if step === 3}}
+                        <form name="opener-public-keys">
+                            {{>opener-matrix keys=publicKeys title='Public Keys'}}
+
+                            <button type="submit" class="float-right">
+                                Continue &raquo;
+                            </button>
+                        </form>
+                    {{else}}
+                        <form name="opener-private-keys">
+                            {{>opener-matrix keys=privateKeys title='Private Keys'}}
+
+                            <button type="submit" class="float-right">
+                                Decrypt the Vault
+                            </button>
+                        </form>
+                    {{/if}}
+                {{/if}}
+            {{/if}}
+        </div>
+    </content>
+</article>

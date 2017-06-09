@@ -1,0 +1,32 @@
+<div class="matrix" keys::{{keys}}>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Public</th>
+                <th>Private</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each keys}}
+                <tr class="key" key:{{this}}>
+                    <td>
+                        <input type="text" value::{{name}} data-key-attr="name">
+                    </td>
+                    <td>
+                        <input type="text" value::{{public}} data-key-attr="public">
+                    </td>
+                    <td>
+                        <input type="text" value::{{private}} data-key-attr="private">
+                    </td>
+                    <td>
+                        <a href="#" data-remove-key>x</a>
+                    </td>
+                </tr>
+            {{/each}}
+        </tbody>
+    </table>
+
+    <button class="button-small" data-add-key>+ Add Person</button>
+</div>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Heirsoft</title>
+</head>
+<body>
+    <div id="heirsoft"></div>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="heirsoft.js"></script>
+    <link rel="stylesheet" type="text/css" href="heirsoft.css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200" rel="stylesheet">
+    <script type="text/javascript">
+        var heirsoft = new window.Heirsoft({
+            $: jQuery.noConflict()
+        });
+        document.getElementById('heirsoft').append(heirsoft.element);
+    </script>
+</body>
+</html>

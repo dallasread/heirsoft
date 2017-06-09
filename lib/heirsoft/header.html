@@ -1,25 +1,25 @@
 <site-header>
-    <a href="/" class="message">
+    <a class="message">
         <span class="ellipsis">
-            Heirsoft: Protect your personal notes and letters in a digital vault - with multiple passwords.
+            Heirsoft: Protect your personal notes and letters in a digital vault - 1 file that is encrypted by multiple passwords.
         </span>
     </a>
 
     <nav>
         <ul class="meta">
-            {{#if vault}}
+            {{#if vault || opener}}
                 <li>
-                    <a href="#/" data-unset="vault">
+                    <a href="#/" data-unset>
                         <span class="mobile-only">&times;</span>
                         <span class="desktop-only">Close Vault</span>
                     </a>
                 </li>
             {{else}}
-                <li>
+                <!-- <li>
                     <a href="#/">
                         About
                     </a>
-                </li>
+                </li> -->
             {{/if}}
         </ul>
 

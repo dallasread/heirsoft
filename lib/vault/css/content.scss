@@ -1,8 +1,12 @@
 content {
     display: block;
 
-    h1, h2, h3, h4, h5, h6, p, ul, ol {
+    h1, h2, h3, h4, h5, h6, p, ul, ol, form, table {
         margin-bottom: 20px;
+    }
+
+    li {
+        margin-bottom: 10px;
     }
 
     h1, h3 {
@@ -12,9 +16,41 @@ content {
         font-size: 130%;
     }
 
-    p, td, th {
+    p, td, th, li {
         font-size: 90%;
         color: rgba(0, 0, 0, 0.6);
+    }
+
+    ol {
+        list-style: decimal;
+        margin-left: 25px;
+    }
+
+    ul {
+        list-style: disc;
+        margin-left: 25px;
+    }
+
+    table {
+        width: 100%;
+
+        th {
+            background: #fafafa;
+        }
+
+        td, th {
+            border: 1px solid #ddd;
+        }
+
+        input {
+            border: 0 !important;
+        }
+
+        a {
+            min-width: 3em;
+            display: inline-block;
+            text-align: center;
+        }
     }
 
     hr {

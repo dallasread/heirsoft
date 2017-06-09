@@ -8,11 +8,11 @@
     {{#if branch.children}}
         {{#if tree.isWritable}}
             <div class="meta">
-                <button data-add-child parent:{{branch}}>
+                <button class="button-small" data-add-child parent:{{branch}}>
                     + File
                 </button>
 
-                <button data-add-child data-type="folder" parent:{{branch}}>
+                <button class="button-small" data-add-child data-type="folder" parent:{{branch}}>
                     + Folder
                 </button>
             </div>
@@ -22,7 +22,6 @@
             {{#each @alpha(branch.children)}}
                 {{>branch branch=this tree=tree}}
             {{/each}}
-
         </ul>
     {{/if}}
 </li>
