@@ -1,11 +1,11 @@
 var ExtractTextPlugin = require('extract-text-webpack-plugin'),
     extractSass = new ExtractTextPlugin({
-        filename: './dist/heirsoft.css'
+        filename: './docs/heirsoft.css'
     });
 
 var js = {
     entry: ['./index'],
-    output: { filename: './dist/heirsoft.js' },
+    output: { filename: './docs/heirsoft.js' },
     module: {
         loaders: [
             { test: /\.json$/, loader: 'json-loader' },
@@ -18,7 +18,7 @@ var js = {
 
 var css = {
     entry: ['./index.css'],
-    output: { filename: './dist/heirsoft.css' },
+    output: { filename: './docs/heirsoft.css' },
     module: {
         rules: [{
             test: /\.scss|\.css$/,
